@@ -33,10 +33,12 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+
+import com.cland.accessstats.model.DataEntry;
 //import org.apache.http.message.BasicNameValuePair;
 //import org.apache.http.client.methods.HttpPost;
-//import java.util.ArrayList;
-//import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 //import org.apache.http.client.entity.UrlEncodedFormEntity;
 //import org.apache.http.NameValuePair;
 
@@ -73,14 +75,32 @@ public class QuickStart {
                 EntityUtils.consume(entity1);
                 
                 
-                //Process the result json data in the the DataEntry object
+                //Process the result json data in the the into a collection DataEntry objects
                 int num = 3; //we requested for 3 destinations
-                
+                List<DataEntry> dataentries = new ArrayList<DataEntry>();
                 for(int i=0;i<num;i++){
-                	System.out.println(">>> DESTINATION " + i);
-                	System.out.println(">>>Distance text: " + GMatrix.getDistanceText(result, 0, i));
-                    System.out.println(">>>Duration : " + GMatrix.getDurationText(result, 0, i));
+                	String distance = GMatrix.getDistanceText(result, 0, i);
+                	String duration = GMatrix.getDurationText(result, 0, i);
+                	DataEntry d = new DataEntry();
+                    d.setName("DESTINATION " + (i+1));
+                    d.setDistance(distance);
+                    d.setTravelTime(duration);
+                    dataentries.add(d);
+                    
+//                	System.out.println(">>> DESTINATION " + i);
+//                	System.out.println(">>>Distance text: " + distance);
+//                  System.out.println(">>>Duration : " + duration);
+                    
+                } //end for loop
+                
+                
+                //Now we can return the collection as JSON at this ONLY has google data only
+                //Lets see wat we have so far
+                
+                for(DataEntry e: dataentries){
+                	System.out.println(">>> " + e.getName() + ": Distance=" + e.getDistance() + ", Duration=" + e.getTravelTime());
                 }
+                
                 
             } finally {
                 response1.close();
